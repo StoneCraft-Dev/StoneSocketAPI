@@ -22,7 +22,9 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
     
     shade 'io.fastjson:boon:0.34'
-    shade 'org.reflections:reflections:0.10.2'
+    shade ('org.reflections:reflections:0.10.2') {
+        exclude group: 'org.slf4j'
+    }
 }
 
 shadowJar {
