@@ -33,3 +33,7 @@ jobs:
       with:
         gradle-version: 8.2
         arguments: build
+    - uses: actions/upload-artifact@v3
+      with:
+        name: Package
+        path: build/libs
