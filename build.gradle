@@ -22,14 +22,14 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
     
     shade 'io.fastjson:boon:0.34'
-    shade ('org.reflections:reflections:0.10.2') {
-        exclude group: 'org.slf4j'
-    }
+    shade 'org.reflections:reflections:0.10.2'
 }
 
 shadowJar {
     archiveClassifier = ''
     configurations = [project.configurations.shade]
+    relocate 'io.fastjson', 'eu.playsc.stonesocketapi.libs.fastjson'
+    relocate 'org.reflections', 'eu.playsc.stonesocketapi.libs.reflections'
 }
 
 assemble.dependsOn shadowJar
