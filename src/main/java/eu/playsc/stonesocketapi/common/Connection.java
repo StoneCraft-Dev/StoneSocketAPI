@@ -1,7 +1,9 @@
 package eu.playsc.stonesocketapi.common;
 
+import eu.playsc.stonesocketapi.Logger;
 import eu.playsc.stonesocketapi.server.ConnectionManager;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,7 +19,9 @@ public class Connection {
 	private transient final InetAddress address;
 	@Getter
 	private transient Socket socket;
+	@Getter
 	private transient ObjectOutputStream tcpOut;
+	@Setter
 	private IProtocol protocol;
 
 	public Connection(Socket socket) {
@@ -28,7 +32,7 @@ public class Connection {
 			socket.setSoLinger(true, 0);
 			tcpOut = new ObjectOutputStream(socket.getOutputStream());
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.error(e);
 		}
 		id = ++counter;
 	}
@@ -50,19 +54,11 @@ public class Connection {
 				tcpOut.flush();
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.error(e);
 			if (protocol.getListener() != null && protocol.getListener() != null)
 				protocol.getListener().disconnected(this);
 			ConnectionManager.getInstance().close(this);
 		}
-	}
-
-	public ObjectOutputStream getTcpOutputStream() {
-		return tcpOut;
-	}
-
-	public void setProtocol(IProtocol protocol) {
-		this.protocol = protocol;
 	}
 
 	public void close() {

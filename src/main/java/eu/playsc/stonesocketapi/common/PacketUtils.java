@@ -26,7 +26,7 @@ public class PacketUtils {
 
 			return objectArray;
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logger.log(e);
 		}
 
 		return null;

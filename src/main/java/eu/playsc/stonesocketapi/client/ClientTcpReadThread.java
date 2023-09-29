@@ -1,5 +1,6 @@
 package eu.playsc.stonesocketapi.client;
 
+import eu.playsc.stonesocketapi.Logger;
 import eu.playsc.stonesocketapi.common.Connection;
 import eu.playsc.stonesocketapi.common.PacketUtils;
 import eu.playsc.stonesocketapi.server.threads.DisconnectedThread;
@@ -42,7 +43,7 @@ public class ClientTcpReadThread implements Runnable {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logger.error(e);
 			serverConnection.close();
 			client.executeThread(new DisconnectedThread(client.getListener(), serverConnection));
 		}

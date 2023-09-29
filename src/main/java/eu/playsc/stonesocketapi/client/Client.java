@@ -1,18 +1,23 @@
 package eu.playsc.stonesocketapi.client;
 
+import eu.playsc.stonesocketapi.Logger;
 import eu.playsc.stonesocketapi.common.Connection;
 import eu.playsc.stonesocketapi.common.IProtocol;
 import eu.playsc.stonesocketapi.common.SocketListener;
+import eu.playsc.stonesocketapi.packets.ConnectedToServerPacket;
 import eu.playsc.stonesocketapi.server.ConnectionManager;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Client implements IProtocol {
+	private String identifier;
+	private String key;
 	private final int tcpPort;
 	private InetAddress address;
 	private ExecutorService mainExecutor;
@@ -28,20 +33,20 @@ public class Client implements IProtocol {
 				address = InetAddress.getLocalHost().getHostName();
 			this.address = InetAddress.getByName(address);
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			Logger.error(e);
 		}
 		this.tcpPort = tcpPort;
 	}
 
-	public Client() {
-		address = null;
-		tcpPort = -1;
-		mainExecutor = Executors.newCachedThreadPool();
-	}
+	public void connect(String identifier, String key) {
+		this.identifier = identifier;
+		this.key = key;
 
-	public void connect() {
 		try {
 			tcpSocket = new Socket(address, tcpPort);
+			PrintWriter writer = new PrintWriter(tcpSocket.getOutputStream(), true);
+			writer.println(this.key);
+
 			serverConnection = new Connection(tcpSocket);
 			serverConnection.setProtocol(this);
 			if (listener != null) {
@@ -49,14 +54,17 @@ public class Client implements IProtocol {
 			}
 			ConnectionManager.getInstance().addConnection(serverConnection);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.error(e);
 		}
 
 		mainExecutor = Executors.newCachedThreadPool();
 
-		if (tcpSocket != null && tcpSocket.isConnected()) {
+		if (isConnected()) {
 			mainExecutor.execute(new ClientTcpReadThread(this, serverConnection));
-			serverConnection.sendTcp("ConnectedToServer");
+			serverConnection.sendTcp(new ConnectedToServerPacket(identifier, key));
+			Logger.log("Connected to server!");
+		} else {
+			Logger.error("Can't connect to server! Maybe wrong key?");
 		}
 	}
 
@@ -75,7 +83,7 @@ public class Client implements IProtocol {
 		try {
 			tcpSocket.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.error(e);
 		}
 	}
 }

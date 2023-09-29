@@ -1,7 +1,10 @@
 package eu.playsc.stonesocketapi.server.threads;
 
+import eu.playsc.stonesocketapi.Logger;
 import eu.playsc.stonesocketapi.common.Connection;
 import eu.playsc.stonesocketapi.common.PacketUtils;
+import eu.playsc.stonesocketapi.packets.ConnectedToServerPacket;
+import eu.playsc.stonesocketapi.packets.TestAlivePacket;
 import eu.playsc.stonesocketapi.server.ConnectionManager;
 import eu.playsc.stonesocketapi.server.Server;
 
@@ -20,7 +23,7 @@ public class ServerTcpReadThread implements Runnable {
 		try {
 			in = new ObjectInputStream(con.getSocket().getInputStream());
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.error(e);
 		}
 	}
 
@@ -45,16 +48,15 @@ public class ServerTcpReadThread implements Runnable {
 					ObjectInputStream is = new ObjectInputStream(objIn);
 					Object object = is.readObject();
 
-					if (!(object instanceof String)) {
-						server.executeThread(new ReceivedThread(server.getListener(), con, object));
-					} else if (!((String) object).equalsIgnoreCase("ConnectedToServer") && !((String)object).equalsIgnoreCase("TestAlivePing")) {
+					if (object instanceof ConnectedToServerPacket || object instanceof TestAlivePacket || object instanceof String) {
 						server.executeThread(new ReceivedThread(server.getListener(), con, object));
 					}
+
 					is.close();
 					objIn.close();
 				}
 			} catch (IOException | ClassNotFoundException e) { //disconnected
-				e.printStackTrace();
+				Logger.error(e);
 				ConnectionManager.getInstance().close(con);
 				try {
 					in.close();

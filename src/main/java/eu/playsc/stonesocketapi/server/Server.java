@@ -1,5 +1,6 @@
 package eu.playsc.stonesocketapi.server;
 
+import eu.playsc.stonesocketapi.Logger;
 import eu.playsc.stonesocketapi.common.IProtocol;
 import eu.playsc.stonesocketapi.common.SocketListener;
 import eu.playsc.stonesocketapi.common.exceptions.CantStartServerException;
@@ -19,14 +20,18 @@ public class Server implements IProtocol {
 	@Getter
 	@Setter
 	private SocketListener listener;
+	@Getter
+	private final String key;
 
-	public Server(int tcpPort) throws CantStartServerException {
+	public Server(int tcpPort, String key) throws CantStartServerException {
+		this.key = key;
+
 		try {
 			tcpSocket = new ServerSocket(tcpPort, 1, InetAddress.getByName("0.0.0.0"));
 		} catch (IOException e) {
-			e.printStackTrace();
 			throw new CantStartServerException();
 		}
+
 		mainExecutor = Executors.newCachedThreadPool();
 		mainExecutor.execute(new TcpAcceptThread(this, tcpSocket));
 	}
@@ -47,7 +52,7 @@ public class Server implements IProtocol {
 			if (!tcpSocket.isClosed())
 				tcpSocket.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.error(e);
 		}
 		ConnectionManager.getInstance().closeAll();
 	}
