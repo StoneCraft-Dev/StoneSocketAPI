@@ -31,6 +31,7 @@ public class TcpAcceptThread implements Runnable {
 					continue;
 				}
 
+				Logger.log("Accepted connection from " + socket.getInetAddress().getHostAddress());
 				server.executeThread(new AcceptedSocketThread(server, tcpSocket.accept()));
 			} catch (IOException e) {
 				Logger.error(e);

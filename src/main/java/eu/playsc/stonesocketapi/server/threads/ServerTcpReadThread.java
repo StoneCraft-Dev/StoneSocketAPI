@@ -48,9 +48,7 @@ public class ServerTcpReadThread implements Runnable {
 					ObjectInputStream is = new ObjectInputStream(objIn);
 					Object object = is.readObject();
 
-					if (object instanceof ConnectedToServerPacket || object instanceof TestAlivePacket || object instanceof String) {
-						server.executeThread(new ReceivedThread(server.getListener(), con, object));
-					}
+					server.executeThread(new ReceivedThread(server.getListener(), con, object));
 
 					is.close();
 					objIn.close();

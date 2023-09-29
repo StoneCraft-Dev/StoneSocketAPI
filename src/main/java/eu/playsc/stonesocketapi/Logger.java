@@ -3,7 +3,7 @@ package eu.playsc.stonesocketapi;
 import java.util.logging.Level;
 
 public class Logger {
-	private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger("StoneSocketAPI");
+	private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getAnonymousLogger();
 	public static void error(Exception e) {
 		LOGGER.log(Level.SEVERE, e.getMessage(), e);
 	}
