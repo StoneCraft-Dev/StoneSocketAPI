@@ -1,5 +1,7 @@
 package eu.playsc.stonesocketapi.common;
 
+import eu.playsc.stonesocketapi.Logger;
+
 import java.io.ByteArrayOutputStream;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
@@ -26,7 +28,7 @@ public class PacketUtils {
 
 			return objectArray;
 		} catch (Exception e) {
-			Logger.log(e);
+			Logger.error(e);
 		}
 
 		return null;
