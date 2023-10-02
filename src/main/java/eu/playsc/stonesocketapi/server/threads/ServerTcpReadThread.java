@@ -5,9 +5,7 @@ import eu.playsc.stonesocketapi.common.Connection;
 import eu.playsc.stonesocketapi.packets.Packet;
 import eu.playsc.stonesocketapi.server.ConnectionManager;
 import eu.playsc.stonesocketapi.server.Server;
-import org.apache.commons.io.IOUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
@@ -28,20 +26,8 @@ public class ServerTcpReadThread implements Runnable {
 
 	@Override
 	public void run() {
-		byte[] data;
 		while (con.getSocket() != null && !con.getSocket().isClosed() && in != null) {
-			try {
-				try {
-					data = IOUtils.toByteArray(in);
-				} catch (Exception e) { //Client disconnected and data wasn't finished sending
-					ConnectionManager.getInstance().close(con);
-					in.close();
-					in = null;
-					return;
-				}
-
-				ByteArrayInputStream objIn = new ByteArrayInputStream(data);
-				ObjectInputStream is = new ObjectInputStream(objIn);
+			try (ObjectInputStream is = new ObjectInputStream(in)) {
 				Object object = is.readObject();
 
 				if (!(object instanceof Packet)) {
@@ -50,10 +36,7 @@ public class ServerTcpReadThread implements Runnable {
 				}
 
 				server.executeThread(new ReceivedThread(server.getListener(), con, (Packet) object));
-
-				is.close();
-				objIn.close();
-			} catch (IOException | ClassNotFoundException e) { //disconnected
+			} catch (IOException | ClassNotFoundException e) {
 				Logger.error(e);
 				ConnectionManager.getInstance().close(con);
 				try {
