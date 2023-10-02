@@ -25,6 +25,7 @@ public class TcpAcceptThread implements Runnable {
 				Socket socket = tcpSocket.accept();
 				BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				String key = in.readLine();
+				in.close();
 				if (!key.equals(server.getKey())) {
 					Logger.warn("Invalid key (" + key + ") from " + socket.getInetAddress().getHostAddress());
 					socket.close();
