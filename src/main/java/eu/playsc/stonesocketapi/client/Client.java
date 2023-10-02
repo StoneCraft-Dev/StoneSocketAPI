@@ -4,7 +4,6 @@ import eu.playsc.stonesocketapi.Logger;
 import eu.playsc.stonesocketapi.common.Connection;
 import eu.playsc.stonesocketapi.common.IProtocol;
 import eu.playsc.stonesocketapi.common.SocketListener;
-import eu.playsc.stonesocketapi.server.ConnectionManager;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -54,8 +53,6 @@ public class Client implements IProtocol {
 			if (listener != null) {
 				listener.connected(serverConnection);
 			}
-
-			ConnectionManager.getInstance().addConnection(serverConnection);
 		} catch (IOException e) {
 			Logger.error(e);
 		}
