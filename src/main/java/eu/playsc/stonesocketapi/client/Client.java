@@ -7,7 +7,6 @@ import eu.playsc.stonesocketapi.common.SocketListener;
 import eu.playsc.stonesocketapi.server.ConnectionManager;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -16,8 +15,6 @@ import java.util.concurrent.Executors;
 
 public class Client implements IProtocol {
 	private final int tcpPort;
-	private String identifier;
-	private String key;
 	private InetAddress address;
 	private ExecutorService mainExecutor;
 	private Socket tcpSocket;
@@ -49,20 +46,15 @@ public class Client implements IProtocol {
 		return serverConnection;
 	}
 
-	public void connect(String identifier, String key) {
-		this.identifier = identifier;
-		this.key = key;
-
+	public void connect() {
 		try {
 			tcpSocket = new Socket(address, tcpPort);
-			PrintWriter writer = new PrintWriter(tcpSocket.getOutputStream(), true);
-			writer.println(this.key);
-
 			serverConnection = new Connection(tcpSocket);
 			serverConnection.setProtocol(this);
 			if (listener != null) {
 				listener.connected(serverConnection);
 			}
+
 			ConnectionManager.getInstance().addConnection(serverConnection);
 		} catch (IOException e) {
 			Logger.error(e);
@@ -72,6 +64,7 @@ public class Client implements IProtocol {
 
 		if (isConnected()) {
 			mainExecutor.execute(new ClientTcpReadThread(this, serverConnection));
+
 		}
 	}
 
