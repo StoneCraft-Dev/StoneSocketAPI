@@ -20,7 +20,6 @@ public class AcceptedSocketThread implements Runnable {
 		Connection con = new Connection(socket);
 		con.setProtocol(server);
 		ConnectionManager.getInstance().addConnection(con);
-		server.executeThread(new NewConnectionThread(server.getListener(), con));
 		server.executeThread(new ServerTcpReadThread(server, con));
 	}
 }

@@ -2,6 +2,9 @@ package eu.playsc.stonesocketapi.server.threads;
 
 import eu.playsc.stonesocketapi.Logger;
 import eu.playsc.stonesocketapi.common.Connection;
+import eu.playsc.stonesocketapi.packets.AuthDenyPacket;
+import eu.playsc.stonesocketapi.packets.AuthPacket;
+import eu.playsc.stonesocketapi.packets.AuthSuccessPacket;
 import eu.playsc.stonesocketapi.packets.Packet;
 import eu.playsc.stonesocketapi.server.ConnectionManager;
 import eu.playsc.stonesocketapi.server.Server;
@@ -35,6 +38,32 @@ public class ServerTcpReadThread implements Runnable {
 					Logger.error("Received object is not a packet!");
 					continue;
 				}
+
+				if (object instanceof AuthPacket) {
+					AuthPacket authPacket = (AuthPacket) object;
+					if (authPacket.getAuthKey().equals(server.getKey())) {
+						Logger.log("Accepted authentication from " + con.getAddress().getHostAddress());
+						con.sendPacket(new AuthSuccessPacket());
+						ConnectionManager.getInstance().authenticateConnection(con);
+						server.executeThread(new NewConnectionThread(server.getListener(), con));
+					} else {
+						Logger.log("Denied authentication from " + con.getAddress().getHostAddress() + " with key " + authPacket.getAuthKey());
+						con.sendPacket(new AuthDenyPacket());
+						ConnectionManager.getInstance().close(con);
+						try {
+							in.close();
+						} catch (IOException e1) {
+							Logger.error(e1);
+						}
+						in = null;
+						continue;
+					}
+
+					continue;
+				}
+
+				if (!ConnectionManager.getInstance().isConnectionAuthenticated(con))
+					continue;
 
 				server.executeThread(new ReceivedThread(server.getListener(), con, (Packet) object));
 			} catch (IOException | ClassNotFoundException e) {

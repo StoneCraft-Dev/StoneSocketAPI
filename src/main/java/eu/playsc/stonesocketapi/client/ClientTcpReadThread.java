@@ -19,8 +19,8 @@ public class ClientTcpReadThread implements Runnable {
 
 	@Override
 	public void run() {
-		try (ObjectInputStream is = new ObjectInputStream(serverConnection.getSocket().getInputStream())) {
-			while (!serverConnection.getSocket().isClosed()) {
+		while (!serverConnection.getSocket().isClosed()) {
+			try (ObjectInputStream is = new ObjectInputStream(serverConnection.getSocket().getInputStream())) {
 				Object object = is.readObject();
 
 				if (!(object instanceof Packet)) {
@@ -29,11 +29,11 @@ public class ClientTcpReadThread implements Runnable {
 				}
 
 				client.executeThread(new ReceivedThread(client.getListener(), serverConnection, (Packet) object));
+			} catch (Exception e) {
+				Logger.error(e);
+				serverConnection.close();
+				client.executeThread(new DisconnectedThread(client.getListener(), serverConnection));
 			}
-		} catch (Exception e) {
-			Logger.error(e);
-			serverConnection.close();
-			client.executeThread(new DisconnectedThread(client.getListener(), serverConnection));
 		}
 	}
 }

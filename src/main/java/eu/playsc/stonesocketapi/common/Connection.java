@@ -14,7 +14,7 @@ public class Connection {
 	private static int counter = 0;
 	private final int id;
 	private transient final InetAddress address;
-	private transient final ObjectOutputStream tcpOut;
+	private transient final ObjectOutputStream outputStream;
 	private transient Socket socket;
 	private IProtocol protocol;
 
@@ -31,7 +31,7 @@ public class Connection {
 			tcpOut1 = null;
 		}
 
-		tcpOut = tcpOut1;
+		outputStream = tcpOut1;
 		id = ++counter;
 	}
 
@@ -47,8 +47,8 @@ public class Connection {
 		return socket;
 	}
 
-	public ObjectOutputStream getTcpOut() {
-		return tcpOut;
+	public ObjectOutputStream getOutput() {
+		return outputStream;
 	}
 
 	public void setProtocol(IProtocol protocol) {
@@ -59,20 +59,17 @@ public class Connection {
 		return socket != null && socket.isConnected() && socket.isBound() && !socket.isClosed();
 	}
 
-	public void sendTcp(Packet packet) {
-		try {
-			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-			ObjectOutputStream objOut = new ObjectOutputStream(byteOutStream);
+	public void sendPacket(Packet packet) {
+		try (ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+			 ObjectOutputStream objOut = new ObjectOutputStream(byteOutStream)) {
 			objOut.writeObject(packet);
-			synchronized (tcpOut) {
-				tcpOut.write(byteOutStream.toByteArray());
-				tcpOut.flush();
+			synchronized (outputStream) {
+				outputStream.write(byteOutStream.toByteArray());
+				outputStream.flush();
 			}
-			objOut.close();
-			byteOutStream.close();
 		} catch (IOException e) {
 			Logger.error(e);
-			if (protocol.getListener() != null && protocol.getListener() != null)
+			if (protocol.getListener() != null)
 				protocol.getListener().disconnected(this);
 			ConnectionManager.getInstance().close(this);
 		}
