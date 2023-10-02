@@ -21,7 +21,6 @@ public class AcceptedSocketThread implements Runnable {
 		con.setProtocol(server);
 		ConnectionManager.getInstance().addConnection(con);
 		server.executeThread(new NewConnectionThread(server.getListener(), con));
-		server.executeThread(new PingThread(server, con));
 		server.executeThread(new ServerTcpReadThread(server, con));
 	}
 }

@@ -3,8 +3,6 @@ package eu.playsc.stonesocketapi.server.threads;
 import eu.playsc.stonesocketapi.Logger;
 import eu.playsc.stonesocketapi.common.Connection;
 import eu.playsc.stonesocketapi.common.PacketUtils;
-import eu.playsc.stonesocketapi.packets.ConnectedToServerPacket;
-import eu.playsc.stonesocketapi.packets.TestAlivePacket;
 import eu.playsc.stonesocketapi.server.ConnectionManager;
 import eu.playsc.stonesocketapi.server.Server;
 

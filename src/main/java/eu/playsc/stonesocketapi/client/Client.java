@@ -4,7 +4,6 @@ import eu.playsc.stonesocketapi.Logger;
 import eu.playsc.stonesocketapi.common.Connection;
 import eu.playsc.stonesocketapi.common.IProtocol;
 import eu.playsc.stonesocketapi.common.SocketListener;
-import eu.playsc.stonesocketapi.packets.ConnectedToServerPacket;
 import eu.playsc.stonesocketapi.server.ConnectionManager;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,7 +29,7 @@ public class Client implements IProtocol {
 	public Client(String address, int tcpPort) {
 		try {
 			if (address.equalsIgnoreCase("localhost"))
-				address = InetAddress.getLocalHost().getHostName();
+				this.address = InetAddress.getLocalHost();
 			this.address = InetAddress.getByName(address);
 		} catch (UnknownHostException e) {
 			Logger.error(e);
@@ -61,10 +60,6 @@ public class Client implements IProtocol {
 
 		if (isConnected()) {
 			mainExecutor.execute(new ClientTcpReadThread(this, serverConnection));
-			serverConnection.sendTcp(new ConnectedToServerPacket(identifier, key));
-			Logger.log("Connected to server!");
-		} else {
-			Logger.error("Can't connect to server! Maybe wrong key?");
 		}
 	}
 
