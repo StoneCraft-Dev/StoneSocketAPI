@@ -1,19 +1,23 @@
 package eu.playsc.stonesocketapi.server;
 
 import eu.playsc.stonesocketapi.common.Connection;
-import lombok.Getter;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
 
 public class ConnectionManager {
-	@Getter
 	private static final ConnectionManager instance = new ConnectionManager();
-	@Getter
 	private final ArrayList<Connection> connections = new ArrayList<>();
-
 	private ConnectionManager() {
 
+	}
+
+	public static ConnectionManager getInstance() {
+		return instance;
+	}
+
+	public ArrayList<Connection> getConnections() {
+		return connections;
 	}
 
 	public Connection getConnection(InetAddress address) {

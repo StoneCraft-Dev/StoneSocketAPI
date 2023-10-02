@@ -5,27 +5,25 @@ import eu.playsc.stonesocketapi.common.Connection;
 import eu.playsc.stonesocketapi.common.IProtocol;
 import eu.playsc.stonesocketapi.common.SocketListener;
 import eu.playsc.stonesocketapi.server.ConnectionManager;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Client implements IProtocol {
+	private final int tcpPort;
 	private String identifier;
 	private String key;
-	private final int tcpPort;
 	private InetAddress address;
 	private ExecutorService mainExecutor;
 	private Socket tcpSocket;
-	@Getter
-	@Setter
 	private SocketListener listener;
-	@Getter
 	private Connection serverConnection;
+
 	public Client(String address, int tcpPort) {
 		try {
 			if (address.equalsIgnoreCase("localhost"))
@@ -34,7 +32,21 @@ public class Client implements IProtocol {
 		} catch (UnknownHostException e) {
 			Logger.error(e);
 		}
+
 		this.tcpPort = tcpPort;
+	}
+
+	@Override
+	public SocketListener getListener() {
+		return listener;
+	}
+
+	public void setListener(SocketListener listener) {
+		this.listener = listener;
+	}
+
+	public Connection getServerConnection() {
+		return serverConnection;
 	}
 
 	public void connect(String identifier, String key) {

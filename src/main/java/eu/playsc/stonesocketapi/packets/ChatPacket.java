@@ -1,25 +1,40 @@
 package eu.playsc.stonesocketapi.packets;
 
-import lombok.Getter;
-import lombok.Setter;
-
 public class ChatPacket implements Packet {
 	private final String identifier;
-	@Getter
-	@Setter
 	private String message;
-	@Getter
-	@Setter
 	private String fromPlayer;
-	@Getter
-	@Setter
 	private String toPlayer;
 
 	public ChatPacket(String identifier) {
 		this.identifier = identifier;
-		this.message = null;
-		this.fromPlayer = null;
-		this.toPlayer = null;
+		message = null;
+		fromPlayer = null;
+		toPlayer = null;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public String getFromPlayer() {
+		return fromPlayer;
+	}
+
+	public void setFromPlayer(String fromPlayer) {
+		this.fromPlayer = fromPlayer;
+	}
+
+	public String getToPlayer() {
+		return toPlayer;
+	}
+
+	public void setToPlayer(String toPlayer) {
+		this.toPlayer = toPlayer;
 	}
 
 	@Override

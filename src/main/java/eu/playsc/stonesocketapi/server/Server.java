@@ -5,8 +5,6 @@ import eu.playsc.stonesocketapi.common.IProtocol;
 import eu.playsc.stonesocketapi.common.SocketListener;
 import eu.playsc.stonesocketapi.common.exceptions.CantStartServerException;
 import eu.playsc.stonesocketapi.server.threads.TcpAcceptThread;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -17,11 +15,8 @@ import java.util.concurrent.Executors;
 public class Server implements IProtocol {
 	private final ExecutorService mainExecutor;
 	private final ServerSocket tcpSocket;
-	@Getter
-	@Setter
-	private SocketListener listener;
-	@Getter
 	private final String key;
+	private SocketListener listener;
 
 	public Server(int tcpPort, String key) throws CantStartServerException {
 		this.key = key;
@@ -34,6 +29,19 @@ public class Server implements IProtocol {
 
 		mainExecutor = Executors.newCachedThreadPool();
 		mainExecutor.execute(new TcpAcceptThread(this, tcpSocket));
+	}
+
+	@Override
+	public SocketListener getListener() {
+		return listener;
+	}
+
+	public void setListener(SocketListener listener) {
+		this.listener = listener;
+	}
+
+	public String getKey() {
+		return key;
 	}
 
 	@Override
