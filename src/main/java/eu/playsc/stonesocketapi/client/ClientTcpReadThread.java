@@ -2,6 +2,7 @@ package eu.playsc.stonesocketapi.client;
 
 import eu.playsc.stonesocketapi.Logger;
 import eu.playsc.stonesocketapi.common.Connection;
+import eu.playsc.stonesocketapi.packets.Packet;
 import eu.playsc.stonesocketapi.server.threads.DisconnectedThread;
 import eu.playsc.stonesocketapi.server.threads.ReceivedThread;
 import org.apache.commons.io.IOUtils;
@@ -36,9 +37,12 @@ public class ClientTcpReadThread implements Runnable {
 				ObjectInputStream is = new ObjectInputStream(objIn);
 				Object object = is.readObject();
 
-				if (object != null) {
-					client.executeThread(new ReceivedThread(client.getListener(), serverConnection, object));
+				if (!(object instanceof Packet)) {
+					Logger.error("Received object is not a packet!");
+					continue;
 				}
+
+				client.executeThread(new ReceivedThread(client.getListener(), serverConnection, (Packet) object));
 			}
 		} catch (Exception e) {
 			Logger.error(e);
