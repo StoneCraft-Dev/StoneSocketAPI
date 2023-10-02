@@ -4,6 +4,7 @@ import eu.playsc.stonesocketapi.Logger;
 import eu.playsc.stonesocketapi.common.Connection;
 import eu.playsc.stonesocketapi.server.ConnectionManager;
 import eu.playsc.stonesocketapi.server.Server;
+import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class ServerTcpReadThread implements Runnable {
 		while (con.getSocket() != null && !con.getSocket().isClosed() && in != null) {
 			try {
 				try {
-					data = in.readAllBytes();
+					data = IOUtils.toByteArray(in);
 				} catch (Exception e) { //Client disconnected and data wasn't finished sending
 					ConnectionManager.getInstance().close(con);
 					in.close();

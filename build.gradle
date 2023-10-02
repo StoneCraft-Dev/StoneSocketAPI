@@ -3,15 +3,12 @@ plugins {
 }
 
 group = 'eu.playsc'
-version = '1.0-SNAPSHOT'
+version = '1.0'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-}
-
-test {
-    useJUnitPlatform()
+    implementation 'commons-io:commons-io:2.14.0'
 }

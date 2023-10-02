@@ -4,6 +4,7 @@ import eu.playsc.stonesocketapi.Logger;
 import eu.playsc.stonesocketapi.common.Connection;
 import eu.playsc.stonesocketapi.server.threads.DisconnectedThread;
 import eu.playsc.stonesocketapi.server.threads.ReceivedThread;
+import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
@@ -24,7 +25,7 @@ public class ClientTcpReadThread implements Runnable {
 			while (!serverConnection.getSocket().isClosed()) {
 				byte[] data;
 				try {
-					data = in.readAllBytes();
+					data = IOUtils.toByteArray(in);
 				} catch (Exception e) { //Connection lost to server and didn't finish sending data
 					serverConnection.close();
 					client.executeThread(new DisconnectedThread(client.getListener(), serverConnection));
