@@ -18,7 +18,7 @@ public class ConnectionManager {
 	}
 
 	public List<Connection> getConnections() {
-		return new ArrayList<>(authenticatedConnections);
+		return authenticatedConnections;
 	}
 
 	public void addConnection(Connection con) {
