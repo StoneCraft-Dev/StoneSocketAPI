@@ -2,7 +2,6 @@ package eu.playsc.stonesocketapi.client;
 
 import eu.playsc.stonesocketapi.Logger;
 import eu.playsc.stonesocketapi.common.Connection;
-import eu.playsc.stonesocketapi.common.PacketUtils;
 import eu.playsc.stonesocketapi.server.threads.DisconnectedThread;
 import eu.playsc.stonesocketapi.server.threads.ReceivedThread;
 
@@ -23,18 +22,16 @@ public class ClientTcpReadThread implements Runnable {
 		try {
 			ObjectInputStream in = new ObjectInputStream(serverConnection.getSocket().getInputStream());
 			while (!serverConnection.getSocket().isClosed()) {
-				byte[] data = new byte[2048];
+				byte[] data;
 				try {
-					in.readFully(data);
+					data = in.readAllBytes();
 				} catch (Exception e) { //Connection lost to server and didn't finish sending data
 					serverConnection.close();
 					client.executeThread(new DisconnectedThread(client.getListener(), serverConnection));
 					return; //kill thread
 				}
 
-				byte[] objectArray = PacketUtils.getObjectFromPacket(data);
-
-				ByteArrayInputStream objIn = new ByteArrayInputStream(objectArray);
+				ByteArrayInputStream objIn = new ByteArrayInputStream(data);
 				ObjectInputStream is = new ObjectInputStream(objIn);
 				Object object = is.readObject();
 
@@ -48,5 +45,4 @@ public class ClientTcpReadThread implements Runnable {
 			client.executeThread(new DisconnectedThread(client.getListener(), serverConnection));
 		}
 	}
-
 }

@@ -1,6 +1,7 @@
 package eu.playsc.stonesocketapi.common;
 
 import eu.playsc.stonesocketapi.Logger;
+import eu.playsc.stonesocketapi.packets.Packet;
 import eu.playsc.stonesocketapi.server.ConnectionManager;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,20 +21,24 @@ public class Connection {
 	@Getter
 	private transient Socket socket;
 	@Getter
-	private transient ObjectOutputStream tcpOut;
+	private transient final ObjectOutputStream tcpOut;
 	@Setter
 	private IProtocol protocol;
 
 	public Connection(Socket socket) {
+		ObjectOutputStream tcpOut1;
 		this.socket = socket;
 		address = socket.getInetAddress();
 
 		try {
 			socket.setSoLinger(true, 0);
-			tcpOut = new ObjectOutputStream(socket.getOutputStream());
+			tcpOut1 = new ObjectOutputStream(socket.getOutputStream());
 		} catch (IOException e) {
 			Logger.error(e);
+			tcpOut1 = null;
 		}
+
+		tcpOut = tcpOut1;
 		id = ++counter;
 	}
 
@@ -41,18 +46,17 @@ public class Connection {
 		return socket != null && socket.isConnected() && socket.isBound() && !socket.isClosed();
 	}
 
-	public void sendTcp(Object object) {
+	public void sendTcp(Packet packet) {
 		try {
 			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
 			ObjectOutputStream objOut = new ObjectOutputStream(byteOutStream);
-			objOut.writeObject(object);
-			byte[] data = PacketUtils.getByteArray(byteOutStream);
-			objOut.close();
-			byteOutStream.close();
+			objOut.writeObject(packet);
 			synchronized(tcpOut) {
-				tcpOut.write(data);
+				tcpOut.write(byteOutStream.toByteArray());
 				tcpOut.flush();
 			}
+			objOut.close();
+			byteOutStream.close();
 		} catch (IOException e) {
 			Logger.error(e);
 			if (protocol.getListener() != null && protocol.getListener() != null)

@@ -2,7 +2,6 @@ package eu.playsc.stonesocketapi.server.threads;
 
 import eu.playsc.stonesocketapi.Logger;
 import eu.playsc.stonesocketapi.common.Connection;
-import eu.playsc.stonesocketapi.common.PacketUtils;
 import eu.playsc.stonesocketapi.server.ConnectionManager;
 import eu.playsc.stonesocketapi.server.Server;
 
@@ -28,11 +27,10 @@ public class ServerTcpReadThread implements Runnable {
 	@Override
 	public void run() {
 		byte[] data;
-		while(con.getSocket() != null && !con.getSocket().isClosed() && in != null) {
+		while (con.getSocket() != null && !con.getSocket().isClosed() && in != null) {
 			try {
-				data = new byte[2048];
 				try {
-					in.readFully(data);
+					data = in.readAllBytes();
 				} catch (Exception e) { //Client disconnected and data wasn't finished sending
 					ConnectionManager.getInstance().close(con);
 					in.close();
@@ -40,24 +38,21 @@ public class ServerTcpReadThread implements Runnable {
 					return;
 				}
 
-				byte[] objectArray = PacketUtils.getObjectFromPacket(data);
-				if (objectArray != null) {
-					ByteArrayInputStream objIn = new ByteArrayInputStream(objectArray);
-					ObjectInputStream is = new ObjectInputStream(objIn);
-					Object object = is.readObject();
+				ByteArrayInputStream objIn = new ByteArrayInputStream(data);
+				ObjectInputStream is = new ObjectInputStream(objIn);
+				Object object = is.readObject();
 
-					server.executeThread(new ReceivedThread(server.getListener(), con, object));
+				server.executeThread(new ReceivedThread(server.getListener(), con, object));
 
-					is.close();
-					objIn.close();
-				}
+				is.close();
+				objIn.close();
 			} catch (IOException | ClassNotFoundException e) { //disconnected
 				Logger.error(e);
 				ConnectionManager.getInstance().close(con);
 				try {
 					in.close();
 				} catch (IOException e1) {
-					e1.printStackTrace();
+					Logger.error(e1);
 				}
 				in = null;
 			}
