@@ -6,7 +6,9 @@ import eu.playsc.stonesocketapi.packets.AuthPacket;
 import eu.playsc.stonesocketapi.packets.Packet;
 import eu.playsc.stonesocketapi.server.ConnectionManager;
 import eu.playsc.stonesocketapi.server.Server;
+import org.apache.commons.io.IOUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
@@ -29,10 +31,21 @@ public class ServerTcpReadThread implements Runnable {
 	public void run() {
 		while (con.getSocket() != null && !con.getSocket().isClosed() && in != null) {
 			try {
-				Object object;
-				synchronized (in) {
-					object = in.readObject();
+				byte[] data;
+				try {
+					data = IOUtils.toByteArray(in);
+				} catch (Exception e) {
+					ConnectionManager.getInstance().close(con);
+					in.close();
+					in = null;
+					return;
 				}
+
+				ByteArrayInputStream objIn = new ByteArrayInputStream(data);
+				ObjectInputStream is = new ObjectInputStream(objIn);
+				Object object = is.readObject();
+				is.close();
+				objIn.close();
 
 				if (!(object instanceof Packet)) {
 					Logger.error("Received object is not a packet!");

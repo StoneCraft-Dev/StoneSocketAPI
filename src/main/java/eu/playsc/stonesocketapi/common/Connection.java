@@ -4,6 +4,7 @@ import eu.playsc.stonesocketapi.Logger;
 import eu.playsc.stonesocketapi.packets.Packet;
 import eu.playsc.stonesocketapi.server.ConnectionManager;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
@@ -57,8 +58,14 @@ public class Connection {
 
 	public void sendPacket(Packet packet) {
 		try {
+			ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+			ObjectOutputStream objOut = new ObjectOutputStream(byteOutStream);
+			objOut.writeObject(packet);
+			byte[] data = byteOutStream.toByteArray();
+			objOut.close();
+			byteOutStream.close();
 			synchronized (outputStream) {
-				outputStream.writeObject(packet);
+				outputStream.write(data);
 				outputStream.flush();
 			}
 		} catch (IOException e) {
