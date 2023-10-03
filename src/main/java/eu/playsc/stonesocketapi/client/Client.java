@@ -61,7 +61,6 @@ public class Client implements IProtocol {
 
 		if (isConnected()) {
 			mainExecutor.execute(new ClientTcpReadThread(this, serverConnection));
-
 		}
 	}
 

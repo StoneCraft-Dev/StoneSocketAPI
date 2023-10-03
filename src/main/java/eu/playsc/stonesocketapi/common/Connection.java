@@ -57,6 +57,7 @@ public class Connection {
 	public void sendPacket(Packet packet) {
 		try {
 			outputStream.writeObject(packet);
+			outputStream.flush();
 		} catch (IOException e) {
 			Logger.error(e);
 			if (protocol.getListener() != null)

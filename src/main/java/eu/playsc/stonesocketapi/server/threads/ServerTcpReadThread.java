@@ -77,5 +77,4 @@ public class ServerTcpReadThread implements Runnable {
 			}
 		}
 	}
-
 }

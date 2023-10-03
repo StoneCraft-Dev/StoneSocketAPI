@@ -7,7 +7,6 @@ import eu.playsc.stonesocketapi.common.exceptions.CantStartServerException;
 import eu.playsc.stonesocketapi.server.threads.TcpAcceptThread;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,7 +21,7 @@ public class Server implements IProtocol {
 		this.key = key;
 
 		try {
-			tcpSocket = new ServerSocket(tcpPort, 1, InetAddress.getByName("0.0.0.0"));
+			tcpSocket = new ServerSocket(tcpPort);
 		} catch (IOException e) {
 			throw new CantStartServerException();
 		}
@@ -56,12 +55,12 @@ public class Server implements IProtocol {
 
 	@Override
 	public void close() {
+		ConnectionManager.getInstance().closeAll();
 		try {
 			if (!tcpSocket.isClosed())
 				tcpSocket.close();
 		} catch (IOException e) {
 			Logger.error(e);
 		}
-		ConnectionManager.getInstance().closeAll();
 	}
 }

@@ -1,6 +1,7 @@
 package eu.playsc.stonesocketapi.server;
 
 import eu.playsc.stonesocketapi.common.Connection;
+import eu.playsc.stonesocketapi.packets.HubRestartPacket;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,7 @@ public class ConnectionManager {
 		}
 
 		for (Connection con : authenticatedConnections) {
+			con.sendPacket(new HubRestartPacket());
 			con.close();
 		}
 	}
