@@ -2,7 +2,9 @@ package eu.playsc.stonesocketapi.server.threads;
 
 import eu.playsc.stonesocketapi.Logger;
 import eu.playsc.stonesocketapi.common.Connection;
+import eu.playsc.stonesocketapi.packets.AuthDenyPacket;
 import eu.playsc.stonesocketapi.packets.AuthPacket;
+import eu.playsc.stonesocketapi.packets.AuthSuccessPacket;
 import eu.playsc.stonesocketapi.packets.Packet;
 import eu.playsc.stonesocketapi.server.ConnectionManager;
 import eu.playsc.stonesocketapi.server.Server;
@@ -40,12 +42,12 @@ public class ServerTcpReadThread implements Runnable {
 					AuthPacket authPacket = (AuthPacket) object;
 					if (authPacket.getAuthKey().equals(server.getKey())) {
 						Logger.log("Accepted authentication from " + con.getAddress().getHostAddress());
-						//con.sendPacket(new AuthSuccessPacket());
+						con.sendPacket(new AuthSuccessPacket());
 						ConnectionManager.getInstance().authenticateConnection(con);
 						server.executeThread(new NewConnectionThread(server.getListener(), con));
 					} else {
 						Logger.log("Denied authentication from " + con.getAddress().getHostAddress() + " with key " + authPacket.getAuthKey());
-						//con.sendPacket(new AuthDenyPacket());
+						con.sendPacket(new AuthDenyPacket());
 						ConnectionManager.getInstance().close(con);
 						try {
 							in.close();
