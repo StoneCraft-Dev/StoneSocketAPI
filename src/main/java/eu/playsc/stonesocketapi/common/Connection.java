@@ -39,6 +39,7 @@ public class Connection {
 	}
 
 	public Socket getSocket() {
+		System.out.println(socket + " ||| " + socket.isConnected() + " ||| " + socket.isBound() + " ||| " + socket.isClosed());
 		return socket;
 	}
 
