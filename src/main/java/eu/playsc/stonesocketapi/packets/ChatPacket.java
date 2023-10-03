@@ -1,10 +1,13 @@
 package eu.playsc.stonesocketapi.packets;
 
+import java.util.UUID;
+
 public class ChatPacket implements Packet {
 	private final String identifier;
 	private String message;
 	private String fromPlayer;
 	private Type type;
+	private UUID senderUUID;
 
 	public ChatPacket(String originServer, Type type) {
 		identifier = originServer;
@@ -35,6 +38,14 @@ public class ChatPacket implements Packet {
 
 	public Type getType() {
 		return type;
+	}
+
+	public UUID getSenderUUID() {
+		return senderUUID;
+	}
+
+	public void setSenderUUID(UUID senderUUID) {
+		this.senderUUID = senderUUID;
 	}
 
 	public enum Type {
