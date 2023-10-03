@@ -30,10 +30,8 @@ public class ServerTcpReadThread implements Runnable {
 	@Override
 	public void run() {
 		while (con.getSocket() != null && !con.getSocket().isClosed() && in != null) {
-			System.out.println("Waiting for object...");
 			try {
 				Object object = in.readObject();
-				Logger.log("Received object of type " + object.getClass().getSimpleName());
 
 				if (!(object instanceof Packet)) {
 					Logger.error("Received object is not a packet!");

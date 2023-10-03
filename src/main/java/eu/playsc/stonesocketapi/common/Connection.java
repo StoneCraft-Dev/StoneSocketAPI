@@ -23,7 +23,6 @@ public class Connection {
 		address = socket.getInetAddress();
 
 		try {
-			socket.setSoLinger(true, 0);
 			tcpOut1 = new ObjectOutputStream(socket.getOutputStream());
 		} catch (IOException e) {
 			Logger.error(e);
@@ -60,10 +59,8 @@ public class Connection {
 
 	public void sendPacket(Packet packet) {
 		try {
-			synchronized (outputStream) {
-				outputStream.writeObject(packet);
-				outputStream.flush();
-			}
+			outputStream.writeObject(packet);
+			outputStream.flush();
 		} catch (IOException e) {
 			Logger.error(e);
 			if (protocol.getListener() != null)
