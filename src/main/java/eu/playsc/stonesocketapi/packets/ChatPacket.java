@@ -33,6 +33,10 @@ public class ChatPacket implements Packet {
 		return identifier;
 	}
 
+	public Type getType() {
+		return type;
+	}
+
 	public enum Type {
 		GLOBAL,
 		STAFF
