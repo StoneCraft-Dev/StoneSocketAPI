@@ -10,5 +10,4 @@ repositories {
 }
 
 dependencies {
-    implementation 'commons-io:commons-io:2.14.0'
 }
