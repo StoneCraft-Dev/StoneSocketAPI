@@ -13,23 +13,20 @@ public class Connection {
 	private static int counter = 0;
 	private final int id;
 	private transient final InetAddress address;
-	private transient final ObjectOutputStream outputStream;
+	private transient ObjectOutputStream outputStream = null;
 	private transient Socket socket;
 	private IProtocol protocol;
 
 	public Connection(Socket socket) {
-		ObjectOutputStream tcpOut1;
 		this.socket = socket;
 		address = socket.getInetAddress();
 
 		try {
-			tcpOut1 = new ObjectOutputStream(socket.getOutputStream());
+			outputStream = new ObjectOutputStream(socket.getOutputStream());
 		} catch (IOException e) {
 			Logger.error(e);
-			tcpOut1 = null;
 		}
 
-		outputStream = tcpOut1;
 		id = ++counter;
 	}
 
@@ -60,7 +57,6 @@ public class Connection {
 	public void sendPacket(Packet packet) {
 		try {
 			outputStream.writeObject(packet);
-			outputStream.flush();
 		} catch (IOException e) {
 			Logger.error(e);
 			if (protocol.getListener() != null)
