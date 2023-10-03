@@ -29,7 +29,10 @@ public class ServerTcpReadThread implements Runnable {
 	public void run() {
 		while (con.getSocket() != null && !con.getSocket().isClosed() && in != null) {
 			try {
-				Object object = in.readObject();
+				Object object;
+				synchronized (in) {
+					object = in.readObject();
+				}
 
 				if (!(object instanceof Packet)) {
 					Logger.error("Received object is not a packet!");
