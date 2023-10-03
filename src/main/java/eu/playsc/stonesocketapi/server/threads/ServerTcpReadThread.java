@@ -30,6 +30,7 @@ public class ServerTcpReadThread implements Runnable {
 	@Override
 	public void run() {
 		while (con.getSocket() != null && !con.getSocket().isClosed() && in != null) {
+			System.out.println("Waiting for object...");
 			try {
 				Object object = in.readObject();
 				Logger.log("Received object of type " + object.getClass().getSimpleName());
@@ -66,7 +67,7 @@ public class ServerTcpReadThread implements Runnable {
 					continue;
 
 				server.executeThread(new ReceivedThread(server.getListener(), con, (Packet) object));
-			} catch (IOException | ClassNotFoundException e) {
+			} catch (Exception e) {
 				Logger.error(e);
 				ConnectionManager.getInstance().close(con);
 				try {

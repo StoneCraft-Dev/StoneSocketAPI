@@ -24,7 +24,7 @@ public class TcpAcceptThread implements Runnable {
 
 				Logger.log("Accepted connection from " + socket.getInetAddress().getHostAddress());
 				Logger.log("Awaiting authentication...");
-				server.executeThread(new AcceptedSocketThread(server, tcpSocket.accept()));
+				server.executeThread(new AcceptedSocketThread(server, socket));
 			} catch (IOException e) {
 				Logger.error(e);
 			}
