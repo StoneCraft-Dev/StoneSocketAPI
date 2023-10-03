@@ -4,13 +4,12 @@ public class ChatPacket implements Packet {
 	private final String identifier;
 	private String message;
 	private String fromPlayer;
-	private String toPlayer;
+	private Type type;
 
-	public ChatPacket(String identifier) {
-		this.identifier = identifier;
+	public ChatPacket(String originServer, Type type) {
+		identifier = originServer;
 		message = null;
 		fromPlayer = null;
-		toPlayer = null;
 	}
 
 	public String getMessage() {
@@ -29,16 +28,13 @@ public class ChatPacket implements Packet {
 		this.fromPlayer = fromPlayer;
 	}
 
-	public String getToPlayer() {
-		return toPlayer;
-	}
-
-	public void setToPlayer(String toPlayer) {
-		this.toPlayer = toPlayer;
-	}
-
 	@Override
 	public String getOriginServer() {
 		return identifier;
+	}
+
+	public enum Type {
+		GLOBAL,
+		STAFF
 	}
 }
