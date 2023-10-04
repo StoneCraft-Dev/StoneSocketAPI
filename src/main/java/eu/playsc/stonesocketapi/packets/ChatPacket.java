@@ -4,31 +4,25 @@ import java.util.UUID;
 
 public class ChatPacket implements Packet {
 	private final String identifier;
-	private String message;
-	private String fromPlayer;
-	private Type type;
-	private UUID senderUUID;
+	private final Type type;
+	private final String message;
+	private final String fromPlayer;
+	private final UUID senderUUID;
 
-	public ChatPacket(String originServer, Type type) {
+	public ChatPacket(String originServer, Type type, String message, String fromPlayer, UUID senderUUID) {
 		identifier = originServer;
-		message = null;
-		fromPlayer = null;
+		this.type = type;
+		this.message = message;
+		this.fromPlayer = fromPlayer;
+		this.senderUUID = senderUUID;
 	}
 
 	public String getMessage() {
 		return message;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
 	public String getFromPlayer() {
 		return fromPlayer;
-	}
-
-	public void setFromPlayer(String fromPlayer) {
-		this.fromPlayer = fromPlayer;
 	}
 
 	@Override
@@ -42,10 +36,6 @@ public class ChatPacket implements Packet {
 
 	public UUID getSenderUUID() {
 		return senderUUID;
-	}
-
-	public void setSenderUUID(UUID senderUUID) {
-		this.senderUUID = senderUUID;
 	}
 
 	public enum Type {
