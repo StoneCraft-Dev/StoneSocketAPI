@@ -65,8 +65,7 @@ public class ServerTcpReadThread implements Runnable {
 					continue;
 
 				server.executeThread(new ReceivedThread(server.getListener(), con, (Packet) object));
-			} catch (Exception e) {
-				Logger.error(e);
+			} catch (Exception ignored) {
 				ConnectionManager.getInstance().close(con);
 				try {
 					in.close();

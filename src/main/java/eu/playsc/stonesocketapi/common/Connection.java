@@ -23,8 +23,8 @@ public class Connection {
 
 		try {
 			outputStream = new ObjectOutputStream(socket.getOutputStream());
-		} catch (IOException e) {
-			Logger.error(e);
+		} catch (IOException ignored) {
+			Logger.error("Could not create output stream!");
 		}
 
 		id = ++counter;
@@ -60,8 +60,8 @@ public class Connection {
 				outputStream.writeObject(packet);
 				outputStream.flush();
 			}
-		} catch (IOException e) {
-			Logger.error(e);
+		} catch (IOException ignored) {
+			Logger.error("Error while sending packet!");
 			if (protocol.getListener() != null)
 				protocol.getListener().disconnected(this);
 			ConnectionManager.getInstance().close(this);
@@ -72,8 +72,7 @@ public class Connection {
 		try {
 			if (socket != null)
 				socket.close();
-		} catch (IOException e) {
-			//socket already closed
+		} catch (IOException ignored) {
 		}
 		socket = null;
 	}

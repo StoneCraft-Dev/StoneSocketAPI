@@ -54,7 +54,7 @@ public class Client implements IProtocol {
 				listener.connected(serverConnection);
 			}
 		} catch (IOException e) {
-			Logger.error(e);
+			Logger.error("Could not connect to the server!");
 		}
 
 		mainExecutor = Executors.newCachedThreadPool();
@@ -77,7 +77,9 @@ public class Client implements IProtocol {
 	@Override
 	public void close() {
 		try {
+			mainExecutor.shutdownNow();
 			tcpSocket.close();
+			serverConnection.close();
 		} catch (IOException e) {
 			Logger.error(e);
 		}
