@@ -37,7 +37,7 @@ public class ClientTcpReadThread implements Runnable {
 
 				client.executeThread(new ReceivedThread(client.getListener(), serverConnection, (Packet) object));
 			} catch (Exception ignored) {
-				client.close();
+				serverConnection.close();
 			}
 		}
 	}
