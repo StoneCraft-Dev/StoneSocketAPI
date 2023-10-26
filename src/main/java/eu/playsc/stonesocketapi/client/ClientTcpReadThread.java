@@ -3,7 +3,6 @@ package eu.playsc.stonesocketapi.client;
 import eu.playsc.stonesocketapi.Logger;
 import eu.playsc.stonesocketapi.common.Connection;
 import eu.playsc.stonesocketapi.packets.Packet;
-import eu.playsc.stonesocketapi.server.threads.DisconnectedThread;
 import eu.playsc.stonesocketapi.server.threads.ReceivedThread;
 
 import java.io.IOException;
@@ -38,8 +37,7 @@ public class ClientTcpReadThread implements Runnable {
 
 				client.executeThread(new ReceivedThread(client.getListener(), serverConnection, (Packet) object));
 			} catch (Exception ignored) {
-				serverConnection.close();
-				client.executeThread(new DisconnectedThread(client.getListener(), serverConnection));
+				client.close();
 			}
 		}
 	}
